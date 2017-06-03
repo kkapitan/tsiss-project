@@ -16,7 +16,7 @@ class GitHubNetwork:
     def contributors_for_name(self, name):
         print "--> Finding contributors for " + name
 
-        print "\t\t --> Fetching " + str(self.repos_per_step) + " best ranked repos..."
+        print "\t--> Fetching " + str(self.repos_per_step) + " best ranked repos..."
 
         repos = []
         for repo in self.client.get_user(name).get_repos():
@@ -25,9 +25,9 @@ class GitHubNetwork:
         repos.sort(key=lambda x: x.stargazers_count, reverse=True)
         repos = repos[:self.repos_per_step]
 
-        print "\t\t --> DONE "
+        print "\t--> DONE "
 
-        print "\t\t --> Fetching " + str(self.contributors_per_step) + " most common contributors..."
+        print "\t--> Fetching " + str(self.contributors_per_step) + " most common contributors..."
 
         contributors_frequency = defaultdict(int)
         for repo in repos:
@@ -39,7 +39,7 @@ class GitHubNetwork:
                                    key=lambda (k, v): v,
                                    reverse=True)
 
-        print "\t\t --> DONE"
+        print "\t--> DONE"
 
         return map(lambda (k, v): k, best_contributors[:self.contributors_per_step])
 
