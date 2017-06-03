@@ -22,10 +22,11 @@ class GitHubNetwork:
         for repo in self.client.get_user(name).get_repos():
             repos.append(repo)
 
+        repos = filter(lambda x: not x.fork, repos)
         repos.sort(key=lambda x: x.stargazers_count, reverse=True)
         repos = repos[:self.repos_per_step]
 
-        print "\t--> DONE "
+        print "\t--> DONE " + str(repos)
 
         print "\t--> Fetching " + str(self.contributors_per_step) + " most common contributors..."
 
