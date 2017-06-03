@@ -3,7 +3,10 @@ from collections import defaultdict
 
 import networkx as nx
 import matplotlib.pyplot as plt
+import urllib, json
+import re
 
+PATTERN_ISSUE_PR = "[/](pull|issue).*"
 
 class GitHubNetwork:
 
@@ -28,10 +31,13 @@ class GitHubNetwork:
         repos = repos[:self.repos_per_step]
 
         print "\t--> Fetching " + str(self.ext_repos_per_step) + " most recent external repos..."
+        issues = self.client.search_issues(query="involves:" + str(name), sort="updated", order="desc")
         d = {}
-        for issue in self.client.search_issues(query="involves:"+str(name), sort="updated", order="desc"):
-            d[issue.repository.name] = issue.repository
-        repos.extend(d.values()[:self.ext_repos_per_step])
+        for issue in issues:
+            html_url = re.sub(PATTERN_ISSUE_PR, "", issue.html_url)  # remove '/pull/123' or '/issue/123' suffix
+            d[html_url] = issue
+        for issue in d.values()[:self.ext_repos_per_step]:
+            repos.append(issue.repository)
 
         print "\t--> DONE " + str(repos)
 
