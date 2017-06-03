@@ -7,8 +7,9 @@ import matplotlib.pyplot as plt
 
 class GitHubNetwork:
 
-    def __init__(self, max_repos=5, max_contributors=5, max_depth=2):
+    def __init__(self, max_repos=5, max_extern_repos=5, max_contributors=5, max_depth=2):
         self.repos_per_step = max_repos
+        self.ext_repos_per_step = max_extern_repos
         self.max_depth = max_depth
         self.contributors_per_step = max_contributors
         self.client = Github("tsiss", "qwerty123")
@@ -25,6 +26,12 @@ class GitHubNetwork:
         repos = filter(lambda x: not x.fork, repos)
         repos.sort(key=lambda x: x.stargazers_count, reverse=True)
         repos = repos[:self.repos_per_step]
+
+        print "\t--> Fetching " + str(self.ext_repos_per_step) + " most recent external repos..."
+        d = {}
+        for issue in self.client.search_issues(query="involves:"+str(name), sort="updated", order="desc"):
+            d[issue.repository.name] = issue.repository
+        repos.extend(d.values()[:self.ext_repos_per_step])
 
         print "\t--> DONE " + str(repos)
 
