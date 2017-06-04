@@ -86,11 +86,12 @@ class GitHubNetwork:
                 G.add_edge(name, contributor)
 
         color_map = []
-        degree_sequence = sorted(nx.degree(G).values(), reverse=True)
+        d = sorted(nx.degree(G).values(), reverse=True)
+        d1 = nx.degree(G)
         for node in G:
-            color_map.append(colorsys.rgb_to_hsv(1.0/max(degree_sequence)*G.degree(node), 1.0-0.8/max(degree_sequence)*G.degree(node), 0.5))
+            color_map.append(colorsys.rgb_to_hsv(1.0/max(d)*G.degree(node), 1.0-0.8/max(d)*G.degree(node), 0.5))
 
-        nx.draw(G, with_labels=True, node_size=200, node_color = color_map)
+        nx.draw(G, with_labels=True, nodelist=d1.keys(), node_size=[(200 + v * 100) for v in d1.values()], node_color=color_map)
 
         plt.savefig("simple_path.png")
         plt.show()
