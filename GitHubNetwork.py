@@ -4,6 +4,7 @@ from collections import defaultdict
 import networkx as nx
 import matplotlib.pyplot as plt
 import urllib, json
+import colorsys
 import re
 
 PATTERN_ISSUE_PR = "[/](pull|issue).*"
@@ -84,7 +85,12 @@ class GitHubNetwork:
             for contributor in contributors:
                 G.add_edge(name, contributor)
 
-        nx.draw(G, with_labels=True)
+        color_map = []
+        degree_sequence = sorted(nx.degree(G).values(), reverse=True)
+        for node in G:
+            color_map.append(colorsys.rgb_to_hsv(1.0/max(degree_sequence)*G.degree(node), 1.0-0.8/max(degree_sequence)*G.degree(node), 0.5))
+
+        nx.draw(G, with_labels=True, node_size=200, node_color = color_map)
 
         plt.savefig("simple_path.png")
         plt.show()
