@@ -72,7 +72,7 @@ class GitHubNetwork:
 
         try:
             contributors = self.contributors_for_name(name)
-            if slow_rate:
+            if self.slow_rate:
                 time.sleep(60) 
         except:
             print "\t--> Could not fetch contributors for %s" % name
@@ -103,4 +103,6 @@ class GitHubNetwork:
         nx.draw(G, with_labels=True, nodelist=d1.keys(), node_size=[(200 + v * 100) for v in d1.values()], node_color=color_map)
 
         plt.savefig("simple_path.png")
-        plt.show()
+
+        if self.slow_rate == False:
+            plt.show()
