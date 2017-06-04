@@ -32,11 +32,17 @@ class GitHubNetwork:
 
         print "\t--> Fetching " + str(self.ext_repos_per_step) + " most recent external repos..."
         issues = self.client.search_issues(query="involves:" + str(name), sort="updated", order="desc")
-        d = {}
+        issue_urls = set()
+        issue_list = list()
         for issue in issues:
             html_url = re.sub(PATTERN_ISSUE_PR, "", issue.html_url)  # remove '/pull/123' or '/issue/123' suffix
-            d[html_url] = issue
-        for issue in d.values()[:self.ext_repos_per_step]:
+            if html_url not in issue_urls:
+                issue_urls.add(html_url)
+                if not issue.repository.fork:
+                    issue_list.append(issue)
+            if len(issue_list) >= self.ext_repos_per_step:
+                break
+        for issue in issue_list:
             repos.append(issue.repository)
 
         print "\t--> DONE " + str(repos)
