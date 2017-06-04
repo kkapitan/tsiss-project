@@ -6,16 +6,18 @@ import matplotlib.pyplot as plt
 import urllib, json
 import colorsys
 import re
+import time
 
 PATTERN_ISSUE_PR = "[/](pull|issue).*"
 
 class GitHubNetwork:
 
-    def __init__(self, max_repos=5, max_extern_repos=5, max_contributors=5, max_depth=2):
+    def __init__(self, max_repos=5, max_extern_repos=5, max_contributors=5, max_depth=2, slow_rate=False):
         self.repos_per_step = max_repos
         self.ext_repos_per_step = max_extern_repos
         self.max_depth = max_depth
         self.contributors_per_step = max_contributors
+        self.slow_rate = slow_rate
         self.client = Github("tsiss", "qwerty123")
 
     def contributors_for_name(self, name):
@@ -70,6 +72,9 @@ class GitHubNetwork:
 
         try:
             contributors = self.contributors_for_name(name)
+            if self.slow_rate:
+                print "\t--> Waiting..."
+                time.sleep(60) 
         except:
             print "\t--> Could not fetch contributors for %s" % name
             contributors = []
@@ -99,4 +104,6 @@ class GitHubNetwork:
         nx.draw(G, with_labels=True, nodelist=d1.keys(), node_size=[(200 + v * 100) for v in d1.values()], node_color=color_map)
 
         plt.savefig("simple_path.png")
-        plt.show()
+
+        if self.slow_rate == False:
+            plt.show()
