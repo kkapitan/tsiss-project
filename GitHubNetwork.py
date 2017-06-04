@@ -68,7 +68,12 @@ class GitHubNetwork:
         if depth > self.max_depth:
             return
 
-        contributors = self.contributors_for_name(name)
+        try:
+            contributors = self.contributors_for_name(name)
+        except:
+            print "\t--> Could not fetch contributors for %s" % name
+            contributors = []
+
         network[name] = contributors
 
         for contributor in contributors:
