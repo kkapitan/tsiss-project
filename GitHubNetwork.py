@@ -73,6 +73,7 @@ class GitHubNetwork:
         try:
             contributors = self.contributors_for_name(name)
             if self.slow_rate:
+                print "\t--> Waiting..."
                 time.sleep(60) 
         except:
             print "\t--> Could not fetch contributors for %s" % name
